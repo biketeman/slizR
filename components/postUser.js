@@ -1,27 +1,29 @@
 const env = process.env.NODE_ENV || 'development';
 const config = require(`../config/${env}`)
 const db = config.DB;
+const bcrypt = require('bcrypt');
 
-function randomPassowrd(){
-	var randomstring = Math.random().toString(36).slice(-8);
-	return randomstring
-}
 module.exports = function(req, res) {
-	db('users').insert({
-		username: req.body.username,
-		password: randomPassowrd(),
-		email: req.body.email,
-	})
-	.then((row) => {
-		return res.json({
-			'status_code': 201,
-			'message': 'user successfully added'
+
+		password = req.body.password
+    let salts = bcrypt.genSaltSync(10);
+		let hashed_password = bcrypt.hashSync(password, salts);
+		
+		db('users').insert ({
+			username: req.body.username,
+			password: hashed_password,
+			email: req.body.email,
+		}) 
+		.then((row) => {
+			return res.json({
+				'status_code': 201,
+				'message': 'user successfully added'
+			})
 		})
-	})
-	.catch(function(err){
-		return res.json({
-			'status_code': 400,
-			'error': err
+		.catch(function(err){
+			return res.json({
+				'status_code': 400,
+				'error': err
+			})
 		})
-	})
 }
