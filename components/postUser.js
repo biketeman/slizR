@@ -18,17 +18,25 @@ module.exports = function(req, res) {
 			username: username,
 			password: hashed_password,
 			email: email,
-			api_key: apikey,
-			api_token: apitoken
-		}) 
+		})
+		.returning('id')
 		.then((row) => {
-			return res.json({
-				'status_code': 201,
-				'message': 'user successfully added',
-				'username': username,
-				'email' : email,
-				'api_key': apikey,
-				'api_token': apitoken,
+			const api_key = hat();
+			const api_token = hat();
+			db('tokens').insert({
+				api_key: apikey,
+				api_token: apitoken,
+				user_id: row[0],
+			})
+			.then((row) => {
+				return res.json({
+					'status_code': 201,
+					'message': 'user successfully added',
+					'username': username,
+					'email' : email,
+					'api_key': apikey,
+					'api_token': apitoken,
+				})
 			})
 		})
 		.catch(function(err){

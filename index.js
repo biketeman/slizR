@@ -18,6 +18,9 @@ const services = {
     updateUser: require('./components/updateUser'),
     deleteUser: require('./components/deleteUser'),
     checkLogin: require('./components/checklogin')
+  },
+  tokens: {
+    deleteTokens : require('./components/tokens/deleteTokens')
   }
 }
 app.post('/user', services.users.postUser);
@@ -26,7 +29,7 @@ app.get('/allusers/', services.users.getAllUsers);
 app.post('/updateUser/:id', services.users.updateUser);
 app.delete('/deleteUser/:id', services.users.deleteUser)
 app.post('/login', services.users.checkLogin)
-
+app.delete('/tokens', services.tokens.deleteTokens)
 
 
 app.listen(config.PORT, function () {
